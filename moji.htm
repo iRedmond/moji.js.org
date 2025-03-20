@@ -1,0 +1,85 @@
+<!-- I don't know why I'm doing this since IE doesn't support emoji at all, maybe I just love doing it -->
+<meta http-equiv="X-UA-Compatible" content="IE=11">
+<style>
+body * { font-size: 2rem }
+button {
+	width: 2em;
+	height: 2em;
+	margin: .125em;
+}
+</style>
+<script>
+echo = alert;
+
+function copy(me){
+	var result = document.getElementById("result");
+	var s = result.value += me.innerText;
+	result.select();
+	document.execCommand("copy");
+	echo("Character copied: " + s);
+}
+</script>
+<script>
+String.fromCodePoint || (String.fromCodePoint = function(n){
+	if(n < 0x10000)
+		return String.fromCharCode(n);
+
+	n -= 0x10000;
+
+	return String.fromCharCode(0xD800 + (n >> 10)) + String.fromCharCode(0xDC00 + (n & 0x3FF));
+});
+</script>
+<script>
+0,function(){
+	var 万 = ['¿'], 索 = ['゠'], 筒 = ['・'], 花 = ['☓'], 字 = ['✗', '✘', '🀫'];
+	var rows = [
+		"←↑→↓↔↕↖↗↘↙",
+		['➡️', '⬅️', '⬆️', '⬇️', '↔️', '↕️', '↖️', '↗️', '↘️', '↙️'],
+		万,索,筒,花,字
+	];
+
+	for(let i = 0; i < 9; i++){
+		万.push(String.fromCodePoint(0x1F007 + i));
+		索.push(String.fromCodePoint(0x1F010 + i));
+		筒.push(String.fromCodePoint(0x1F019 + i));
+		花.push(String.fromCodePoint(0x1F022 + i));
+	}
+	for(let i = 0; i < 7; i++) 字.push(String.fromCodePoint(0x1F000 + i));
+
+	if(!rows.length) return;
+
+	for(let rn = 0; rn < rows.length; rn++){
+		let row = rows[rn];
+		for(let cn = 0; cn < row.length; cn++){
+			document.write("<button>" + row[cn] + "</button>");
+		}
+
+		document.writeln("<br>");
+	}
+}()
+0,function(){
+	var downed, last;
+	document.onmousedown = function(evt){ downed = evt.target; };
+	document.onclick = function(evt){
+		var me = evt.target;
+
+		try{
+			if(me !== downed) return;
+
+			if(!(me instanceof HTMLElement)) return;
+
+			me instanceof HTMLButtonElement && copy(me);
+
+			if(me === last) return;
+
+			((me instanceof HTMLInputElement) || (me instanceof HTMLTextAreaElement)) && me.select();
+
+		}finally{
+			last = me;		
+		}
+	};
+}()
+</script>
+<form>
+	<input id="result"><input type="reset">
+</form>
