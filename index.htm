@@ -1,3 +1,4 @@
+
 <!-- I don't know why I'm doing this since IE doesn't support emoji at all, maybe I just love doing it -->
 <meta http-equiv="X-UA-Compatible" content="IE=11">
 <style>
@@ -20,17 +21,16 @@ function copy(me){
 }
 </script>
 <script>
-String.fromCodePoint || (String.fromCodePoint = function(n){
-	if(n < 0x10000)
-		return String.fromCharCode(n);
-
-	n -= 0x10000;
-
-	return String.fromCharCode(0xD800 + (n >> 10)) + String.fromCharCode(0xDC00 + (n & 0x3FF));
-});
-</script>
-<script>
 0,function(){
+	var chr = String.fromCodePoint || function(n){
+		if(n < 0x10000)
+			return String.fromCharCode(n);
+
+		n -= 0x10000;
+
+		return String.fromCharCode(0xD800 + (n >> 10)) + String.fromCharCode(0xDC00 + (n & 0x3FF));
+	};
+
 	var 万 = ['¿'], 索 = ['゠'], 筒 = ['・'], 花 = ['☓'], 字 = ['✗', '✘', '🀫'];
 	var rows = [
 		"←↑→↓↔↕↖↗↘↙",
@@ -39,12 +39,12 @@ String.fromCodePoint || (String.fromCodePoint = function(n){
 	];
 
 	for(let i = 0; i < 9; i++){
-		万.push(String.fromCodePoint(0x1F007 + i));
-		索.push(String.fromCodePoint(0x1F010 + i));
-		筒.push(String.fromCodePoint(0x1F019 + i));
-		花.push(String.fromCodePoint(0x1F022 + i));
+		万.push(chr(0x1F007 + i));
+		索.push(chr(0x1F010 + i));
+		筒.push(chr(0x1F019 + i));
+		花.push(chr(0x1F022 + i));
 	}
-	for(let i = 0; i < 7; i++) 字.push(String.fromCodePoint(0x1F000 + i));
+	for(let i = 0; i < 7; i++) 字.push(chr(0x1F000 + i));
 
 	if(!rows.length) return;
 
@@ -58,26 +58,29 @@ String.fromCodePoint || (String.fromCodePoint = function(n){
 	}
 }()
 0,function(){
-	var downed, last;
-	document.onmousedown = function(evt){ downed = evt.target; };
+	var origin, last;
+	document.onmousedown = function(evt){ origin = evt.target; };
 	document.onclick = function(evt){
 		var me = evt.target;
 
-		try{
-			if(me !== downed) return;
+		try{ // if we don't do this then it could possibly ended up in wrong handling routine other than the user may expected
+			if(me !== origin) return;
 
-			if(!(me instanceof HTMLElement)) return;
-
-			me instanceof HTMLButtonElement && copy(me);
-
-			if(me === last) return;
-
-			((me instanceof HTMLInputElement) || (me instanceof HTMLTextAreaElement)) && me.select();
-
+			onclick(me);
 		}finally{
 			last = me;		
 		}
 	};
+
+	function onclick(me){
+		if(!(me instanceof HTMLElement)) return;
+
+		me instanceof HTMLButtonElement && copy(me);
+
+		if(me === last) return;
+
+		((me instanceof HTMLInputElement) || (me instanceof HTMLTextAreaElement)) && me.select();
+	}
 }()
 </script>
 <form>
